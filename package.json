@@ -1,0 +1,53 @@
+{
+  "name": "editing",
+  "version": "1.0.0",
+  "description": "Editing plugin",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "build": "webpack --mode 'production'",
+    "watch": "webpack --watch --mode 'development'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://volterra79@bitbucket.org/gis3w/g3w-client-plugin-editing.git"
+  },
+  "keywords": [
+    "editing"
+  ],
+  "author": "Francesco Boccacci",
+  "license": "ISC",
+  "homepage": "https://bitbucket.org/gis3w/g3w-client-plugin-editing#readme",
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.4",
+    "babel-preset-env": "^1.6.1",
+    "babelify": "^8.0.0",
+    "browserify": "^16.1.1",
+    "chai": "^4.1.2",
+    "gulp": "^3.9.1",
+    "gulp-if": "^2.0.2",
+    "gulp-rename": "^1.2.2",
+    "gulp-sourcemaps": "^2.6.4",
+    "gulp-uglify": "^3.0.0",
+    "gulp-util": "^3.0.8",
+    "html-loader": "^0.5.5",
+    "karma": "^2.0.0",
+    "karma-chrome-launcher": "^2.2.0",
+    "karma-firefox-launcher": "^1.1.0",
+    "karma-mocha": "^1.3.0",
+    "mocha": "^5.0.4",
+    "stringify": "^5.2.0",
+    "vinyl-buffer": "^1.0.1",
+    "vinyl-source-stream": "^2.0.0",
+    "vue-loader": "^14.2.1",
+    "watchify": "^3.11.0",
+    "webpack": "^4.1.1",
+    "webpack-cli": "^2.0.12",
+    "webpack-dev-server": "^3.1.1",
+    "webpack-hot-middleware": "^2.21.2",
+    "webpack-merge": "^4.1.2"
+  }
+}

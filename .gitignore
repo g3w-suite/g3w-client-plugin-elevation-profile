@@ -1,0 +1,4 @@
+.idea/*
+/plugin.js
+.idea/
+/node_modules/
