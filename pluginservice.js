@@ -4,7 +4,6 @@ const XHR = g3wsdk.core.utils.XHR;
 const PluginService = g3wsdk.core.plugin.PluginService;
 const t = g3wsdk.core.i18n.tPlugin;
 const GUI = g3wsdk.gui.GUI;
-const ComponentsFactory = g3wsdk.gui.ComponentsFactory;
 const ChartsFactory = g3wsdk.gui.vue.Charts.ChartsFactory;
 
 function ElevationProfileService() {
@@ -12,29 +11,24 @@ function ElevationProfileService() {
   this.init = function(config={}) {
     this.chartColor = GUI.skinColor;
     this.config = config;
+    // add vue property to in add elevention chart element
+    this.config.layers && this.config.layers.forEach(layerObj => layerObj._vue = {});
     this._mapService = GUI.getComponent('map').getService();
     this.keySetters = {};
     const queryresultsComponent = GUI.getComponent('queryresults');
     this.queryresultsService = queryresultsComponent.getService();
-    //usefult to register layer under law
-    this.keySetters.addActionLayers = this.queryresultsService.onbefore('addActionsForLayers', (actions={}) => {
-      this.config.layers.forEach(layerObj => {
+    this.keySetters.openCloseFeatureResult = this.queryresultsService.onafter('openCloseFeatureResult', ({open, layer, feature, container})=>{
+      const layerObj = this.config.layers.find(layerObj => {
         const {layer_id: layerId} = layerObj;
-        if (!actions[layerId]) actions[layerId] = [];
-        const layerActions = actions[layerId];
-        layerActions.push({
-          id: 'showelevation',
-          class: GUI.getFontClass('chart'),
-          hint: 'plugins.eleprofile.query.actions.showelevation',
-          cbk: (layer, feature) => {
-            this.showChartComponent({
-              layerObj,
-              fid: feature.attributes['g3w_fid']
-            })
-          }
-        });
+        return layer.id === layerId;
+      });
+      layerObj && this.showHideChartComponent({
+        open,
+        container,
+        layerObj,
+        fid: feature.attributes['g3w_fid']
       })
-    });
+    })
   };
 
   this.getConfig = function(){
@@ -45,20 +39,40 @@ function ElevationProfileService() {
     return this.config.urls;
   };
 
-  this.showChartComponent = function({layerObj, fid}={}) {
-    const {api, layer_id: layerId} = layerObj;
-    this.getChartComponent({api, layerId, fid})
-      .then(({fid, component:vueComponentObject, error}) => {
+  this.createLoadingComponentDomElement = function(){
+    const loadingComponent = Vue.extend({
+      template: `<bar-loader :loading="true"></bar-loader>`
+    });
+    return new loadingComponent().$mount().$el;
+  };
+
+  this.showHideChartComponent = async function({open, layerObj, container, fid}={}) {
+    if (open) {
+      const {api, layer_id: layerId} = layerObj;
+      const barLoadingDom = this.createLoadingComponentDomElement();
+      try {
+        container.append(barLoadingDom);
+        const {component, error} = await this.getChartComponent({api, layerId, fid});
         if (error) return;
-        else GUI.pushContent({
-          id: 'elevation',
-          content: ComponentsFactory.build({
-            vueComponentObject
-          }),
-          perc: 50,
-          closable: false
-        })
-      })
+        const vueComponentObject = Vue.extend(component);
+        layerObj._vue[fid] = new vueComponentObject();
+        layerObj._vue[fid].$once('hook:mounted', async function(){
+          container.append(this.$el);
+          GUI.emit('resize');
+        });
+        layerObj._vue[fid].$mount();
+      } catch (error){
+        return error;
+      } finally {
+        barLoadingDom.remove();
+      }
+    } else {
+      if (layerObj._vue[fid]) {
+        layerObj._vue[fid].$destroy();
+        layerObj._vue[fid].$el.remove();
+        layerObj._vue[fid] = undefined;
+      }
+    }
   };
 
   this.getChartComponent = async function({api, layerId, fid}={}) {
@@ -232,10 +246,9 @@ function ElevationProfileService() {
   };
 
   this.clear = function() {
-    this.queryresultsService.un('addActionLayers', this.keySetters.addActionLayers);
+    this.queryresultsService.un('openCloseFeatureResult', this.keySetters.openCloseFeatureResult);
   }
 }
-
 
 inherit(ElevationProfileService, PluginService);
 
