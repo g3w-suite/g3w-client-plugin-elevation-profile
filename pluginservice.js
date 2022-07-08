@@ -1,10 +1,9 @@
-const inherit = g3wsdk.core.utils.inherit;
-const base = g3wsdk.core.utils.base;
-const XHR = g3wsdk.core.utils.XHR;
-const PluginService = g3wsdk.core.plugin.PluginService;
+const {base, inherit} = g3wsdk.core.utils;
+const {XHR} = g3wsdk.core.utils;
+const {PluginService} = g3wsdk.core.plugin;
+const {GUI} = g3wsdk.gui;
+const {ChartsFactory} = g3wsdk.gui.vue.Charts;
 const t = g3wsdk.core.i18n.tPlugin;
-const GUI = g3wsdk.gui.GUI;
-const ChartsFactory = g3wsdk.gui.vue.Charts.ChartsFactory;
 
 function ElevationProfileService() {
   base(this);
@@ -13,7 +12,7 @@ function ElevationProfileService() {
     this.config = config;
     // add vue property to in add elevention chart element
     this.config.layers && this.config.layers.forEach(layerObj => layerObj._vue = {});
-    this._mapService = GUI.getComponent('map').getService();
+    this._mapService = GUI.getService('map');
     this.keySetters = {};
     const queryresultsComponent = GUI.getComponent('queryresults');
     this.queryresultsService = queryresultsComponent.getService();
