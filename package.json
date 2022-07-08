@@ -1,7 +1,7 @@
 {
-  "name": "editing",
+  "name": "eleprofile",
   "version": "1.0.0",
-  "description": "Editing plugin",
+  "description": "Elevation Profile plugin",
   "main": "index.js",
   "directories": {
     "test": "test"
@@ -12,13 +12,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://volterra79@bitbucket.org/gis3w/g3w-client-plugin-editing.git"
+    "url": "git+https://github.com/g3w-suite/g3w-client-plugin-elevation-profile.git"
   },
   "keywords": [
     "editing"
   ],
   "author": "Francesco Boccacci",
   "license": "ISC",
-  "homepage": "https://bitbucket.org/gis3w/g3w-client-plugin-editing#readme",
+  "homepage": "https://github.com/g3w-suite/g3w-client-plugin-elevation-profile.git#readme",
   "devDependencies": {}
 }
