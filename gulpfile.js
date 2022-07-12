@@ -12,19 +12,17 @@ const watchify = require('watchify');
 const vueify = require('vueify');
 const stringify = require('stringify');
 const sourcemaps = require('gulp-sourcemaps');
+let production = false;
 
 gulp.task('browserify', [], function() {
-  var production = false;
-  var bundler = browserify('./index.js', {
+  let bundler = browserify('./index.js', {
     basedir: "./",
     paths: ["./"],
     debug: !production,
     cache: {},
     packageCache: {}
   });
-  if (!production) {
-    bundler = watchify(bundler);
-  }
+  if (!production) bundler = watchify(bundler);
   bundler.transform(vueify)
   .transform(babelify, {
     babelrc: true
@@ -48,8 +46,6 @@ gulp.task('browserify', [], function() {
       .pipe(gulp.dest('./'));
   };
 
-  var reapibundle;
-
   if (!production) {
     rebundle = function(){
       return bundle();
@@ -64,14 +60,13 @@ gulp.task('browserify', [], function() {
   return rebundle();
 });
 
-
 gulp.task('production', function(){
     production = true;
 });
 
 gulp.task('watch',['browserify']);
 
-gulp.task('default',['production','browserify']);
+gulp.task('build',['production','browserify']);
 
 
 
