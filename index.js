@@ -1,37 +1,28 @@
 import pluginConfig from './config';
+import Service from './service';
 const {base, inherit} = g3wsdk.core.utils;
-const {Plugin} = g3wsdk.core.plugin;
-const {addI18nPlugin} = g3wsdk.core.i18n;
-const Service = require('./service');
+const {Plugin:BasePlugin} = g3wsdk.core.plugin;
 
-const _Plugin = function() {
-  base(this);
-  this.name = 'eleprofile';
-  this.init = function() {
-    // add i18n of the plugin
-    addI18nPlugin({
-      name: this.name,
-      config: pluginConfig.i18n
-    });
-    // set catalog initial tab
-    this.config = this.getConfig();
-    this.setService(Service);
+const Plugin = function() {
+  const {name, i18n} = pluginConfig;
+  base(this, {
+    name,
+    service: Service,
+    i18n
+  });
+  if (this.registerPlugin(this.config.gid)) {
     this.service.init(this.config);
-    this.registerPlugin(this.config.gid);
-    // create API
-    this.setReady(true);
-  };
-  //called when plugin is removed
-  this.unload = function() {
-    this.service.clear();
-  };
+  }
+  this.setReady(true);
 };
 
-inherit(_Plugin, Plugin);
+inherit(Plugin, BasePlugin);
 
-(function(plugin){
-  plugin.init();
-})(new _Plugin);
+//called when plugin is removed
+Plugin.prototype.unload = function() {
+  this.service.clear();
+};
 
+new Plugin();
 
 
